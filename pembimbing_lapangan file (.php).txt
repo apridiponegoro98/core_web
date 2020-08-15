@@ -1,0 +1,492 @@
+<?php
+defined('BASEPATH') or exit('No direct script access allowed');
+
+class Pembimbing_lapangan extends CI_Controller
+{
+    public function __construct()
+    {
+        parent::__construct();
+        is_logged_in();
+        // $raita = new raita;
+        new raita();
+
+        $dictionary = array("");
+        $nama = false;
+    }
+
+    public function detail_pbl()
+    {
+        $dictionary = array("");  //deklarasi untuk running time  
+        $Rtime = 0;  //deklarasi untuk jumlah data  
+        $Htime = 0;
+        $countH = 0;
+        $countR = 0;
+
+        // $search = $_POST['search']['value']; // Ambil data yang di ketik user pada textbox pencarian
+        // $limit = $_POST['length']; // Ambil data limit per page
+        // $start = $_POST['start']; // Ambil data start
+        // $order_index = $_POST['order'][0]['column']; // Untuk mengambil index yg menjadi acuan untuk sorting
+        // $order_field = $_POST['columns'][$order_index]['data']; // Untuk mengambil nama field yg menjadi acuan untuk sorting
+        // $order_ascdesc = $_POST['order'][0]['dir']; // Untuk menentukan order by "ASC" atau "DESC"
+        // $sql_total = $this->Menu_model-->count_all();
+
+        $data['title'] = 'Detail PBL';
+        // $image['user'] = $this->db->get_where('user', ['image' => $this->session->userdata('image')])->row_array();
+        $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+
+        $data['data_pbl'] = $this->Menu_model->detail_pbl()->result_array();
+        if (!isset($_POST['cari'])) {
+            // echo "no cari";
+            $this->load->view('templates_user/header', $data);
+            $this->load->view('templates_user/sidebar', $data);
+            $this->load->view('templates_user/topbar', $data);
+            $this->load->view('data_pbl/detail_pbl', $data);
+            $this->load->view('templates_user/footer');
+        } else if (isset($_POST['cari'])) {
+            // echo "hay";
+            if ($_POST['pilih'] == "semua") {
+                $this->cari_Data($data);
+            } else if ($_POST['pilih'] == "nama_kelompok") {
+                $this->cari_Data_nama($data);
+                // var_dump($this->cari_Data_nama($data));
+                // die;
+            } else if ($_POST['pilih'] == "judul") {
+                $this->cari_Data_judul($data);
+                // var_dump($this->cari_Data_nama($data));
+                // die;
+                // echo "tidak ada";
+            }
+        }
+    }
+    private function cari_Data($dari_db)
+    {
+        $this->load->view('templates_user/header', $dari_db);
+        $this->load->view('templates_user/sidebar', $dari_db);
+        $this->load->view('templates_user/topbar', $dari_db);
+        $this->db->order_by('id_pbl', 'desc');
+
+
+        $this->db->select('id_pbl');
+        $this->db->select('nama_kelompok');
+        $this->db->select('judul_pbl');
+        $this->db->select('desa');
+        $this->db->select('tahun');
+        $this->db->select('keterangan');
+        $sql =  $this->db->get('data_pbl');
+        // $query = $this->db->query("SELECT * FROM data_pbl WHERE " . implode(" OR ", $b)); //Untuk kesalahan kedua
+        $start = microtime(true);
+        $data['as'] = array();
+        $dataR = null;
+
+        foreach ($sql->result_array() as $as) {
+            $i = 0;    //memulai hitungan waktu untuk raita    
+            // $c = $as->nama_kelompok;
+            // var_dump($as);
+            // echo "<br>";
+            $convert_string = implode(" ", $as);
+
+            $raita = new raita;
+            $raita->search(strtolower($convert_string), strtolower(trim($_POST['stringcari'])));
+            if ($raita->report() == 1) {
+                $dataR[$i] = $as;
+                array_push($data['as'], $as);
+            }
+            // echo "<br>count raita " . count($dataR);    //menyimpan hitungan waktu untuk raita    
+            $i++;
+        }
+        $Rtime = microtime(true) - $start;
+        if ($dataR == null) {
+            $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Data "' . $_POST['stringcari'] . '" Tidak ditemukan</div>');
+            redirect('pembimbing_lapangan/detail_pbl');
+        } else {
+            $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Data "' . $_POST['stringcari'] . '" ditemukan</div>');
+        }
+
+
+        $this->load->view('data_pbl/dapat_data', $data);
+    }
+
+    private function cari_Data_nama($dari_db)
+    {
+        // echo "berdasarkan nama";
+        $ceknama = true;
+        $this->load->view('templates_user/header', $dari_db);
+        $this->load->view('templates_user/sidebar', $dari_db);
+        $this->load->view('templates_user/topbar', $dari_db);
+        $this->db->order_by('id_pbl', 'desc');
+
+        $this->db->select('id_pbl');
+        $this->db->select('nama_kelompok');
+        // $this->db->from('data_pbl');
+        // $this->db->from('id', 'id_pbl');
+
+        // $this->db->id('id_pbl');
+        $sql =  $this->db->get('data_pbl');
+        // $query = $this->db->query("SELECT * FROM data_pbl WHERE " . implode(" OR ", $b)); //Untuk kesalahan kedua
+        $start = microtime(true);
+        $data['as'] = array();
+        $dataR = null;
+
+        foreach ($sql->result_array() as $as) {
+            $i = 0;    //memulai hitungan waktu untuk raita    
+            // var_dump($as);
+            // echo "<br>";
+
+            $convert_string = implode(" ", $as);
+
+            // var_dump($convert_string);
+            // die;
+            $nama = true;
+            $raita = new raita;
+            $raita->search(strtolower($convert_string), strtolower(trim($_POST['stringcari'])));
+            if ($raita->report() == 1) {
+                $dataR[$i] = $as;
+                array_push($data['as'], $as);
+            }
+            $i++;
+        }
+        // var_dump($data[$i]);
+        // echo "<br><br><br><br>";
+        // var_dump($data['as']);
+        // die;
+        $Rtime = microtime(true) - $start;
+        if ($dataR == null) {
+            $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Nama Kelmpok "' . $_POST['stringcari'] . '" Tidak ditemukan <br> Dengan Kecepatan "' . $Rtime . '"</div>');
+            redirect('pembimbing_lapangan/detail_pbl');
+        } else {
+            $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Nama Kelmpok "' . $_POST['stringcari'] . '" Ditemukan  <br> Dengan Kecepatan "' . $Rtime . '"</div>');
+        }
+
+
+
+        $this->load->view('data_pbl/dapat_data_nama', $data);
+        // echo "<br>count raita " . count($dataR);    //menyimpan hitungan waktu untuk raita    
+    }
+    private function cari_Data_judul($dari_db)
+    {
+        // echo "berdasarkan nama";
+        $ceknama = true;
+        $this->load->view('templates_user/header', $dari_db);
+        $this->load->view('templates_user/sidebar', $dari_db);
+        $this->load->view('templates_user/topbar', $dari_db);
+        $this->db->order_by('id_pbl', 'desc');
+
+        $this->db->select('id_pbl');
+        $this->db->select('judul_pbl');
+        // $this->db->from('data_pbl');
+        // $this->db->from('id', 'id_pbl');
+
+        // $this->db->id('id_pbl');
+        $sql =  $this->db->get('data_pbl');
+        // $query = $this->db->query("SELECT * FROM data_pbl WHERE " . implode(" OR ", $b)); //Untuk kesalahan kedua
+        $start = microtime(true);
+        $data['as'] = array();
+        $dataR = null;
+
+        foreach ($sql->result_array() as $as) {
+            $i = 0;    //memulai hitungan waktu untuk raita    
+            // var_dump($as);
+            // echo "<br>";
+
+            $convert_string = implode(" ", $as);
+
+            // var_dump($convert_string);
+            // die;
+            $nama = true;
+            $raita = new raita;
+            $raita->search(strtolower($convert_string), strtolower(trim($_POST['stringcari'])));
+            if ($raita->report() == 1) {
+                $dataR[$i] = $as;
+                array_push($data['as'], $as);
+            }
+            $i++;
+        }
+        // echo "<br><br><br><br>";
+        // var_dump($data['as']);
+        // die;
+        if ($dataR == null) {
+            $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Judul "' . $_POST['stringcari'] . '" Tidak ditemukan</div>');
+            redirect('pembimbing_lapangan/detail_pbl');
+        } else {
+            $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Judul "' . $_POST['stringcari'] . '" Ditemukan</div>');
+        }
+
+
+
+        $this->load->view('data_pbl/dapat_data_judul', $data);
+        // echo "<br>count raita " . count($dataR);    //menyimpan hitungan waktu untuk raita    
+        // echo "<br>rtime raita" . $Rtime = microtime(true) - $start;
+    }
+
+    public function index()
+    {
+        $data['title'] = 'Dashboard Pembimbing Lapangan';
+        $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+        // $image['user'] = $this->db->get_where('user', ['image' => $this->session->userdata('image')])->row_array();
+        // echo 'selamat datang ' . $data['user']['name'];
+        $data['data_pbl'] = $this->Menu_model->detail_pbl()->result_array();
+        $this->load->view('templates/header', $data);
+        $this->load->view('templates/sidebar', $data);
+        $this->load->view('templates/topbar', $data);
+        $this->load->view('data_pbl/index', $data);
+        $this->load->view('templates/footer');
+        // $this->load->view('templates/footer');
+    }
+
+    public function add_pbl()
+    {
+        // $new_file = null;
+        $data['title'] = 'Add PBL';
+        $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+
+        // $data['menu'] = $this->db->get('user_menu')->result_array();
+        $this->form_validation->set_rules('id_pbl', 'Id_pbl', 'required');
+        $this->form_validation->set_rules('nama_kelompok', 'Nama_kelompok', 'required');
+        $this->form_validation->set_rules('judul_pbl', 'Judul_pbl', 'required');
+        $this->form_validation->set_rules('desa', 'Desa', 'required');
+        // $this->form_validation->set_rules('tahun', 'Tahun', 'required');
+        $this->form_validation->set_rules('desa', 'desa', 'required');
+        $this->form_validation->set_rules('keterangan', 'Keterangan', 'required');
+        $this->form_validation->set_rules('file', 'File', 'required');
+
+
+        $nama_kelompok = $this->input->post('nama_kelompok');
+        $judul_pbl = $this->input->post('judul_pbl');
+        $desa = $this->input->post('desa');
+        $tahun = $this->input->post('tahun');
+        $keterangan = $this->input->post('keterangan');
+
+        $upload_file = $_FILES['file'];
+
+        // // load library upload
+        if ($upload_file) {
+            $config['upload_path'] = './assets/data_pbl';
+            $config['allowed_types'] = 'pdf|csv';
+            $config['max_size'] = '10024';
+            $this->load->library('upload', $config);
+
+            if (!$this->upload->do_upload('file')) {
+                $error = $this->upload->display_errors();
+                // menampilkan pesan error
+                echo "eror upload";
+                print_r($error);
+            } else {
+                $new_file = $this->upload->data('file_name');
+                // $result = $this->db->set('image', $new_file);
+                echo "berhasil <br>";
+                echo "<pre>";
+                var_dump($new_file);
+
+                $data = array(
+                    'nama_kelompok' => $nama_kelompok,
+                    'judul_pbl' => $judul_pbl,
+                    'desa' => $desa,
+                    'tahun' => $tahun,
+                    'keterangan' => $keterangan,
+                    'file' => $new_file,
+                );
+
+                var_dump($data);
+                // die;
+            }
+            // $data = array('upload_data' => $this->upload->data());
+        }
+
+
+        $this->Menu_model->add_pbl($data, 'data_pbl');
+
+
+        $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">New Menu Added</div>');
+        redirect('pembimbing_lapangan/detail_pbl');
+    }
+
+    public function download($id)
+    {
+        $this->load->helper('download');
+        // var_dump($this->load->helper('download'));
+        // die;
+        $fileinfo = $this->Menu_model->download($id);
+        $file = 'assets/data_pbl/' . $fileinfo['file'];
+
+        var_dump($fileinfo);
+        var_dump($file);
+        force_download($file, null);
+        // redirect('pembimbing_lapangan/detail_pbl');
+    }
+
+
+
+
+
+    public function update_pbl($id_pbl)
+    {
+        $data['title'] = 'Edit PBL';
+        // $data['title'] = 'Welcome Pembibing Lapangan';
+        $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+
+        $where = array('id_pbl' => $id_pbl);
+        // $data['menu'] = $this->Menu_model->edit_management($where, 'user_menu')->result();
+        // $data['menu'] = $this->Menu_model->tampil_management()->result_array();
+        $data['data_pbl'] = $this->Menu_model->update_pbl($where, 'data_pbl')->result();
+        // var_dump($data['data_pbl']);
+        $this->load->view('templates/header', $data);
+        $this->load->view('templates/sidebar', $data);
+        $this->load->view('templates/topbar', $data);
+        $this->load->view('data_pbl/update_pbl', $data);
+        $this->load->view('templates/footer');
+    }
+    public function update()
+    {
+        $id_pbl = $this->input->post('id_pbl');
+        $nama_kelompok = $this->input->post('nama_kelompok');
+        $judul_pbl = $this->input->post('judul_pbl');
+        $desa = $this->input->post('desa');
+        $tahun = $this->input->post('tahun');
+        $keterangan = $this->input->post('keterangan');
+        $file = $this->input->post('file');
+        // $stok = $this->input->post('stok');
+
+        $data = array(
+            // 'id_pbl' => $id_pbl,
+            'nama_kelompok' => $nama_kelompok,
+            'judul_pbl' => $judul_pbl,
+            'desa' => $desa,
+            'tahun' => $tahun,
+            'keterangan' => $keterangan,
+            'file' => $file,
+
+        );
+        var_dump($data);
+
+        $where = array(
+            'id_pbl' => $id_pbl
+        );
+        echo "<br>";
+
+        //$hasil = $this->Menu_model->update_data($where, $data, 'user_sub_menu');
+        $this->db->set($data);
+        $this->db->where($where);
+        $hasil =  $this->db->update('data_pbl');
+        var_dump($hasil);
+
+
+        if ($hasil) {
+
+            $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">New Sub Menu Update</div>');
+            redirect('pembimbing_lapangan/detail_pbl');
+            # code...
+        } else {
+            // redirect('menu/editMenu');
+            $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Failed Sub Menu Update</div>');
+        }
+    }
+
+    public function delete_pbl($id_pbl)
+    {
+        $data['title'] = 'Delete Data PBL';
+        $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+
+        $where = array('id_pbl' => $id_pbl);
+        // var_dump($where);
+        // die;
+        $this->Menu_model->delete_pbl($where, 'data_pbl');
+
+        $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Succes Delete 1 data PBL</div>');
+        redirect('pembimbing_lapangan/detail_pbl');
+    }
+
+    public function view_pbl($id_pbl)
+    {
+        // $data['title'] = 'View Data PBL';
+        // $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+
+
+        // $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Succes Delete User Sub Menu</div>');
+        // redirect('pembimbing_lapangan/view_pbl');
+
+        $data['title'] = 'View PBL';
+        $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+        $where = array('id_pbl' => $id_pbl);
+        // var_dump($where);
+        // die;
+        // $this->Menu_model->view_pbl($where, 'data_pbl');
+        // $data['title'] = 'Welcome Pembibing Lapangan';
+        $data['data_pbl'] = $this->Menu_model->view_pbl($where, 'data_pbl');
+        // $image['user'] = $this->db->get_where('user', ['image' => $this->session->userdata('image')])->row_array();
+        // echo 'selamat datang ' . $data['user']['name'];
+        $this->load->view('templates_user/header', $data);
+        $this->load->view('templates_user/sidebar', $data);
+        $this->load->view('templates_user/topbar', $data);
+        $this->load->view('data_pbl/view_pbl', $data);
+        $this->load->view('templates_user/footer');
+    }
+
+
+    // public function role()
+    // {
+    //     $data['title'] = 'Dashboard role ';
+    //     $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+    //     // $image['user'] = $this->db->get_where('user', ['image' => $this->session->userdata('image')])->row_array();
+    //     // echo 'selamat datang ' . $data['user']['name'];
+    //     $data['role'] = $this->db->get('user_role')->result_array();
+
+    //     $this->form_validation->set_rules('role', 'Role', 'required');
+
+
+    //     if ($this->form_validation->run() == false) {
+    //         $this->load->view('templates/header', $data);
+    //         $this->load->view('templates/sidebar', $data);
+    //         $this->load->view('templates/topbar', $data);
+    //         $this->load->view('admin/role', $data);
+    //         $this->load->view('templates/footer');
+    //     } else {
+    //         $data = [
+    //             'role' => $this->input->post('role'),
+
+    //         ];
+
+    //         $this->db->insert('user_role', $data);
+
+    //         $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">New Sub Menu added</div>');
+    //         redirect('admin/role');
+    //     }
+    // }
+
+    // public function roleAccess($role_id)
+    // {
+    //     $data['title'] = 'Dashboard roleAccess ';
+    //     $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+    //     // $image['user'] = $this->db->get_where('user', ['image' => $this->session->userdata('image')])->row_array();
+    //     // echo 'selamat datang ' . $data['user']['name'];
+    //     $data['role'] = $this->db->get_where('user_role', ['id' => $role_id])->row_array();
+
+    //     $this->db->where('id !=', 1);
+    //     $data['menu'] = $this->db->get('user_menu')->result_array();
+
+    //     $this->load->view('templates/header', $data);
+    //     $this->load->view('templates/sidebar', $data);
+    //     $this->load->view('templates/topbar', $data);
+    //     $this->load->view('admin/role-access', $data);
+    //     $this->load->view('templates/footer');
+    // }
+
+    // public function changeAccess()
+    // {
+    //     $menu_id = $this->input->post('menuId');
+    //     $role_id = $this->input->post('roleId');
+
+    //     $data = [
+    //         'role_id' => $role_id,
+    //         'menu_id' => $menu_id
+    //     ];
+
+    //     $result = $this->db->get_where('user_access_menu', $data);
+    //     if ($result->num_rows() < 1) {
+    //         $this->db->insert('user_access_menu', $data);
+    //     } else {
+    //         $this->db->delete('user_access_menu', $data);
+    //     }
+
+    //     $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Access Changed</div>');
+    // }
+}

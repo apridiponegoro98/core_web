@@ -1,0 +1,67 @@
+import 'package:flutter/material.dart';
+
+class Headset extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final welcome = Padding(
+      padding: EdgeInsets.all(8.0),
+      child: Text(
+        'Pengertian Diabetes',
+        textAlign: TextAlign.left,
+        style: TextStyle(fontSize: 14.0, color: Colors.black87),
+      ),
+    );
+    final judul_jenis = Padding(
+      padding: EdgeInsets.all(4.0),
+      child: Text(
+        'Jenis Diabetes',
+        textAlign: TextAlign.left,
+        style: TextStyle(fontSize: 14.0, color: Colors.black87),
+      ),
+    );
+    final lorem = Padding(
+      padding: EdgeInsets.all(8.0),
+      child: Text(
+        'Diabetes adalah penyakit yang berlangsung lama atau kronis serta ditandai dengan kadar gula (glukosa) darah yang tinggi atau di atas nilai normal. ... Kadar gula dalam darah dikendalikan oleh hormon insulin yang diproduksi oleh pankreas, yaitu organ yang terletak di belakang lambung',
+        textAlign: TextAlign.justify,
+        style: TextStyle(fontSize: 12.0, color: Colors.black87),
+      ),
+    );
+    final jenis = Padding(
+      padding: EdgeInsets.all(8.0),
+      child: Text(
+        'Secara umum, diabetes dibedakan menjadi dua jenis, yaitu diabetes tipe 1 dan tipe 2. Diabetes tipe 1 terjadi karena sistem kekebalan tubuh penderita menyerang dan menghancurkan sel-sel pankreas yang memproduksi insulin. Hal ini mengakibatkan.',
+        textAlign: TextAlign.justify,
+        style: TextStyle(fontSize: 14.0, color: Colors.black87),
+      ),
+    );
+    final alucard = Hero(
+      tag: 'hero',
+      child: Padding(
+        padding: EdgeInsets.all(18.0),
+        child: CircleAvatar(
+            radius: 50.0,
+            // backgroundColor: Colors.transparent,
+            backgroundImage: (new NetworkImage(
+                "https://fajar.co.id/wp-content/uploads/2018/11/diabetes-1280x720.jpg"))),
+      ),
+    );
+    final body = Container(
+      width: MediaQuery.of(context).size.width,
+      padding: EdgeInsets.all(28.0),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(colors: [
+          Colors.white,
+          Colors.white,
+        ]),
+      ),
+      child: Column(
+        children: <Widget>[welcome, lorem, judul_jenis, jenis],
+      ),
+    );
+
+    return Scaffold(
+      body: body,
+    );
+  }
+}
