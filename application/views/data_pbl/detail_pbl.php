@@ -5,6 +5,11 @@
 <div class="container-fluid">
 
     <?= $this->session->flashdata('message'); ?>
+    <?= form_error('menu', '<div class="alert alert-danger" role="alert">', '</div>') ?>
+    <!-- Page Heading -->
+    <!-- <h1 class="h3 mb-4 text-gray-800"><?= $title; ?></h1> -->
+    <?php echo validation_errors(); ?>
+
     <div class="row">
 
         <a href="" class="btn btn-primary mb-2 mc-5 mx-4 my-7" data-toggle="modal" data-target="#newMenuModal">Tambah PBL</a>
@@ -25,7 +30,7 @@
                     </select>
                     <input type="text" id="stringcari" name="stringcari" class="form-control bg-light border-7 small" placeholder="Search for all..." aria-label="Search" aria-describedby="basic-addon2">
                     <div class="input-group-append">
-                        <button class="btn btn-primary" type="submit" name="cari" id="btn-cari" autofocus>
+                        <button class="btn btn-primary" type="submit" name="cari" value="cari" id="btn-cari" autofocus>
                             <i class="fas fa-search fa-sm"></i>
                         </button>
                     </div>
@@ -54,9 +59,7 @@
                 <div class="table-wrapper-scroll-y my-custom-scrollbar">
 
 
-                    <!-- <table id="dtVerticalScrollExample" class="table table-striped table-bordered" cellspacing="0" width="100%"> -->
-                    <table id="example" class="table table-striped table-bordered" cellspacing="0" width="100%">
-                        <!-- <table id="example" class="table table-striped table-bordered" style="width:100%"> -->
+                    <table id="dtVerticalScrollExample" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
                         <thead>
                             <tr>
                                 <th scope="row">NO</th>
@@ -233,10 +236,4 @@
     input.oninvalid = function(event) {
         event.target.setCustomValidity('Username should only contain lowercase letters. e.g. john');
     }
-
-
-
-    $(document).ready(function() {
-        $('#example').DataTable();
-    });
 </script>
