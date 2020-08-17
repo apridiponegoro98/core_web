@@ -34,7 +34,6 @@ class Auth extends CI_Controller
 
 	public function login()
 	{
-
 		if ($this->session->userdata('email')) {
 			redirect('user');
 		}

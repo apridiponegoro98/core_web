@@ -41,108 +41,117 @@
     </div>
 </div>
 <div class="container-fluid">
-
-    <!-- Page Heading -->
-    <!-- <h1 class="h3 mb-2 text-gray-800">Data PBL Fakultas Kesehatan Masyarakat</h1> -->
-    <!-- <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below. For more information about DataTables, please visit the <a target="_blank" href="https://datatables.net">official DataTables documentation</a>.</p> -->
-
-    <!-- DataTales Example -->
-    <div class="card shadow mb-4">
-        <!-- <div class="card-header py-3"> -->
-        <!-- <h4 class="m-0 font-weight-bold text-primary"><?= $title; ?> Fakultas Kesehatan Masyarakat</h4> -->
-
-
-        <!-- </div> -->
-        <div class="card-body">
-
-            <div class="table-responsive">
-                <div class="table-wrapper-scroll-y my-custom-scrollbar">
-
-
-                    <table id="dtVerticalScrollExample" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
-                        <thead>
-                            <tr>
-                                <th scope="row">NO</th>
-                                <!-- <th scope="row">id</th> -->
-                                <th scope="row" class="th-sm">NAMA KELOMPOK </th>
-                                <th scope="row" class="th-sm">JUDUL PBL</th>
-                                <th scope="row" class="th-sm">DESA</th>
-                                <th scope="row" class="th-sm">KECAMATAN</th>
-                                <th scope="row" class="th-sm">KABUPATEN</th>
-                                <th scope="row" class="th-sm">TAHUN</th>
-                                <th scope="row" class="th-sm">KETERANGAN</th>
-                                <th scope="row" class="th-sm">FILE</th>
-                                <th scope="row" class="th-sm"></th>
-                                <th scope="row" class="th-sm">ACTION</th>
-                                <th scope="row"></th>
-                            </tr>
-                        </thead>
-                        <tfoot>
-                            <tr>
-                                <?php $i = ++$start ?>
-                                <?php foreach ($data_pbl as $m) : ?>
-                            <tr>
-                                <th scope="row"><?= $i; ?></th>
-                                <!-- <td><?= $m['id_pbl'] ?></td> -->
-                                <td> <?php echo substr($m['nama_kelompok'], 0, 50) . "...."; ?></td>
-                                <td> <?php echo substr($m['judul_pbl'], 0, 20) . "...."; ?></td>
-                                <!-- <td><?= $m['judul_pbl'] ?></td> -->
-                                <td><?= $m['desa'] ?></td>
-                                <td><?= $m['kecamatan'] ?></td>
-                                <td><?= $m['kabupaten'] ?></td>
-                                <td><?= $m['tahun'] ?></td>
-                                <td><?= $m['keterangan'] ?></td>
-                                <td> <?php echo substr($m['file'], 0, 10) . "...."; ?></td>
+    <div class="card-body">
+        <div class="table-responsive">
+            <div id="dataTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                <div class="row">
+                    <div class="col-sm-12 col-md-6">
+                        <div class="dataTables_length" id="dataTable_length"><label>Show <select name="dataTable_length" aria-controls="dataTable" class="custom-select custom-select-sm form-control form-control-sm">
+                                    <option value="10">10</option>
+                                    <option value="25">25</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                </select> entries</label></div>
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <div id="dataTable_filter" class="dataTables_filter"><label>Search:<input type="search" class="form-control form-control-sm" placeholder="" aria-controls="dataTable"></label></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <table class="table table-bordered dataTable" id="dataTable" width="100%" cellspacing="0" role="grid" aria-describedby="dataTable_info" style="width: 100%;">
 
 
-                                <td>
+                            <table id="dataTable" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
+                                <!-- <table class="table table-bordered dataTable" id="dataTable" width="100%" cellspacing="0" role="grid" aria-describedby="dataTable_info" style="width: 100%;"> -->
+                                <thead>
+                                    <tr role="row">
+                                        <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Name: activate to sort column ascending" style="width: 145px;">NO</th>
+                                        <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Name: activate to sort column ascending" style="width: 145px;">NAMA KELOMPOK</th>
+                                        <th class="sorting_desc" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Position: activate to sort column ascending" aria-sort="descending" style="width: 223px;">JUDUL PBL</th>
+                                        <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Office: activate to sort column ascending" style="width: 103px;">DESA</th>
+                                        <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Age: activate to sort column ascending" style="width: 43px;">KECAMATAN</th>
+                                        <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Start date: activate to sort column ascending" style="width: 95px;">KABUPATEN</th>
+                                        <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Salary: activate to sort column ascending" style="width: 85px;">TAHUN</th>
+                                        <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Salary: activate to sort column ascending" style="width: 85px;">KETERANGAN</th>
+                                        <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Salary: activate to sort column ascending" style="width: 85px;">FILE</th>
+                                        <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Salary: activate to sort column ascending" style="width: 85px;">ACTION</th>
+                                    </tr>
+                                </thead>
+                                <tfoot>
+                                    <tr>
+                                        <th scope="row">NO</th>
+                                        <!-- <th scope="row">id</th> -->
+                                        <th scope="row" class="th-sm">NAMA KELOMPOK </th>
+                                        <th scope="row" class="th-sm">JUDUL PBL</th>
+                                        <th scope="row" class="th-sm">DESA</th>
+                                        <th scope="row" class="th-sm">KECAMATAN</th>
+                                        <th scope="row" class="th-sm">KABUPATEN</th>
+                                        <th scope="row" class="th-sm">TAHUN</th>
+                                        <th scope="row" class="th-sm">KETERANGAN</th>
+                                        <th scope="row" class="th-sm">FILE</th>
+                                        <th scope="row" class="th-sm"></th>
+                                        <th scope="row" class="th-sm">ACTION</th>
+                                        <th scope="row"></th>
+                                    </tr>
+                                </tfoot>
+                                <tbody>
+                                    <?php $i = ++$start ?>
+                                    <?php foreach ($data_pbl as $m) : ?>
+                                        <tr>
+                                            <tD scope="row"><?= $i; ?></tD>
+                                            <!-- <td><?= $m['id_pbl'] ?></td> -->
+                                            <td> <?php echo substr($m['nama_kelompok'], 0, 50) . "...."; ?></td>
+                                            <td> <?php echo substr($m['judul_pbl'], 0, 20) . "...."; ?></td>
+                                            <!-- <td><?= $m['judul_pbl'] ?></td> -->
+                                            <td><?= $m['desa'] ?></td>
+                                            <td><?= $m['kecamatan'] ?></td>
+                                            <td><?= $m['kabupaten'] ?></td>
+                                            <td><?= $m['tahun'] ?></td>
+                                            <td><?= $m['keterangan'] ?></td>
+                                            <td> <?php echo substr($m['file'], 0, 10) . "...."; ?></td>
+                                            <td>
 
-                                    <?php echo anchor(
-                                        'pembimbing_lapangan/view_pbl/' . $m['id_pbl'],
-                                        '<div class="btn btn-info btn-sm" btn-sm data-toggle="modal" data-target="#newMenuModal1?">
+                                                <?php echo anchor(
+                                                    'pembimbing_lapangan/view_pbl/' . $m['id_pbl'],
+                                                    '<div class="btn btn-info btn-sm" btn-sm data-toggle="modal" data-target="#newMenuModal1?">
                             <li class="fa fa-eye"></li>
                             </div>'
-                                    ) ?>
+                                                ) ?>
 
-                                </td>
-                                <td>
-                                    <?php echo anchor('pembimbing_lapangan/update_pbl/' . $m['id_pbl'], '<div class="btn btn-primary btn-sm">
+                                            </td>
+                                            <td>
+                                                <?php echo anchor('pembimbing_lapangan/update_pbl/' . $m['id_pbl'], '<div class="btn btn-primary btn-sm">
     <li class="fa fa-edit"></li>
 </div>') ?>
-                                </td>
-                                <td>
+                                            </td>
+                                            <td>
 
-                                    <?php echo anchor('pembimbing_lapangan/delete_pbl/' . $m['id_pbl'], '<div class="btn btn-danger btn-sm" btn-sm data-toggle="modal" data-target="#newMenuModal1?">
+                                                <?php echo anchor('pembimbing_lapangan/delete_pbl/' . $m['id_pbl'], '<div class="btn btn-danger btn-sm" btn-sm data-toggle="modal" data-target="#newMenuModal1?">
     <li class="fa fa-trash"></li>
     </div>') ?>
-                                </td>
+                                            </td>
 
-                                <!-- <div class="btn btn-danger" btn-sm data-toggle="modal" data-target="#newMenuModal1" value="<?= $m['id_pbl']; ?>">
+                                            </td>
+                                        </tr>
+                                </tbody>
+                            <?php endforeach; ?>
 
-                                    <li class="fa fa-trash"></li>
-                                </div> -->
-                                </td>
-                            </tr>
-                            <!-- <?php $i++; ?> -->
-                        <?php endforeach; ?>
-                        </tr>
-                        </tfoot>
-                    </table>
-                    <nav aria-label="Page navigation">
-                        <?php echo $this->pagination->create_links(); ?>
-                    </nav>
+                            </table>
+                            <nav aria-label="Page navigation">
+                                <?php echo $this->pagination->create_links(); ?>
+                            </nav>
+
+                    </div>
                 </div>
-
-
             </div>
         </div>
+
     </div>
-
-</div>
-<!-- /.container-fluid -->
+    <!-- /.container-fluid -->
 
 
-<!-- /.container-fluid -->
+    <!-- /.container-fluid -->
 
 </div>
 <!-- End of Main Content -->
